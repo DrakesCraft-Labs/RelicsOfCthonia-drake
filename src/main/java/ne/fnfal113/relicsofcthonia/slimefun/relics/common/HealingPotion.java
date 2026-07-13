@@ -1,23 +1,27 @@
 package ne.fnfal113.relicsofcthonia.slimefun.relics.common;
 
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import com.github.drakescraft_labs.slimefun4.api.items.ItemGroup;
+import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItemStack;
 import ne.fnfal113.relicsofcthonia.api.OffHandRightClickHandler;
 import ne.fnfal113.relicsofcthonia.api.Rarity;
 import ne.fnfal113.relicsofcthonia.slimefun.relics.AbstractRelic;
 import ne.fnfal113.relicsofcthonia.utils.Utils;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
-
 public class HealingPotion extends AbstractRelic {
 
     @ParametersAreNonnullByDefault
     public HealingPotion(ItemGroup itemGroup, SlimefunItemStack item, double dropChance, int piglinRewardAmount, int defaultDropSize) {
         super(itemGroup, item, Rarity.COMMON, dropChance, piglinRewardAmount, defaultDropSize);
         addItemHandler((OffHandRightClickHandler) (event, player, offHand) -> {
-            double currentMaxHealth = Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
+            AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
+            if (maxHealth == null) {
+                Utils.sendRelicMessage("&cNo se pudo determinar tu salud máxima.", player);
+                return;
+            }
+            double currentMaxHealth = maxHealth.getValue();
             if (player.getHealth() <= currentMaxHealth - 2){
                 offHand.subtract();
                 player.setHealth(player.getHealth() + 2);

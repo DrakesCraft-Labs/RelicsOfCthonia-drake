@@ -1,7 +1,7 @@
 package ne.fnfal113.relicsofcthonia.listeners;
 
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.core.attributes.PiglinBarterDrop;
+import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
+import com.github.drakescraft_labs.slimefun4.core.attributes.PiglinBarterDrop;
 import ne.fnfal113.relicsofcthonia.RelicsOfCthonia;
 import ne.fnfal113.relicsofcthonia.RelicsRegistry;
 import ne.fnfal113.relicsofcthonia.slimefun.relics.AbstractRelic;
@@ -32,6 +32,10 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static ne.fnfal113.relicsofcthonia.core.Keys.CURRENTLY_TRADING_PLAYER;
+import static ne.fnfal113.relicsofcthonia.core.Keys.CURRENTLY_TRADING_MATERIAL;
+import static ne.fnfal113.relicsofcthonia.core.Keys.CURRENTLY_TRADING_RELIC;
+import static ne.fnfal113.relicsofcthonia.core.Keys.CURRENTLY_TRADING_CONDITION;
+import static ne.fnfal113.relicsofcthonia.core.Keys.CURRENTLY_TRADING_TOKEN;
 
 public class PiglinMainListener implements Listener {
 
@@ -49,38 +53,63 @@ public class PiglinMainListener implements Listener {
         Player player = event.getPlayer();
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
         if (!(event.getRightClicked() instanceof Piglin piglin) || !piglin.isAdult() || piglin.hasMetadata("NPC")
-                || event.getHand() == EquipmentSlot.OFF_HAND || !(SlimefunItem.getByItem(mainHandItem) instanceof AbstractRelic)) {
+                || event.getHand() == EquipmentSlot.OFF_HAND) {
+            return;
+        }
+        if (!(SlimefunItem.getByItem(mainHandItem) instanceof AbstractRelic relic)) {
             return;
         }
 
-        // Heads cannot be traded by default so we have to add relics as a barter material
+        if (isCurrentlyTradingRelic(piglin)) {
+            event.setCancelled(true);
+            return;
+        }
+
+        // Heads cannot be traded by default so we have to add relics as a barter material.
+        // Persist the whole transaction before vanilla can replace the input stack.
         Material type = mainHandItem.getType();
         piglin.addBarterMaterial(type);
-        setCurrentlyTradingPlayer(piglin, player);
+        UUID token = UUID.randomUUID();
+        setCurrentTrade(piglin, player, relic, type, AbstractRelic.getRelicCondition(mainHandItem), token);
+        RelicsOfCthonia.getInstance().getServer().getScheduler().runTaskLater(RelicsOfCthonia.getInstance(), () -> {
+            if (!piglin.isValid()) {
+                return;
+            }
+            TradeState pending = getCurrentTrade(piglin);
+            if (pending != null && pending.token().equals(token)) {
+                piglin.removeBarterMaterial(pending.material());
+                clearCurrentTrade(piglin);
+            }
+        }, 200L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBarter(PiglinBarterEvent event){
         Piglin piglin = event.getEntity();
-        UUID uuid = clearCurrentlyTradingPlayer(piglin);
-        if (uuid == null) {
+        TradeState trade = clearCurrentTrade(piglin);
+        if (trade == null) {
             return;
         }
 
-        Optional<Player> player = Optional.ofNullable(Bukkit.getPlayer(uuid));
+        piglin.removeBarterMaterial(trade.material());
+        Optional<Player> player = Optional.ofNullable(Bukkit.getPlayer(trade.playerId()));
         if (event.isCancelled()) {
             player.ifPresent(p -> Utils.sendRelicMessage("&cThe trade was cancelled by an external source!", p));
             return;
         }
-        if (!(SlimefunItem.getByItem(event.getInput()) instanceof AbstractRelic relic)) {
-            RelicsOfCthonia.getInstance().getLogger().severe("Something modified the piglin's input item while a RelicsOfCthonia trade was in progress");
-            player.ifPresent(p -> Utils.sendRelicMessage("&cThe trade was cancelled by an external source!", p));
+
+        SlimefunItem storedItem = SlimefunItem.getById(trade.relicId());
+        if (!(storedItem instanceof AbstractRelic relic)) {
+            RelicsOfCthonia.getInstance().getLogger().warning("Se descartó un intercambio de reliquia con estado PDC inválido: " + trade.relicId());
             return;
         }
-        piglin.removeBarterMaterial(event.getInput().getType());
+
+        if (event.getInput() == null || event.getInput().getType() != trade.material()) {
+            RelicsOfCthonia.getInstance().getLogger().fine("Paper o un plugin normalizó la entrada de un trueque de " + relic.getId() + "; se usará el estado PDC original.");
+        }
 
         // Random chance for trade to succeed
-        if (ThreadLocalRandom.current().nextInt(100) > AbstractRelic.getRelicCondition(event.getInput())) {
+        if (ThreadLocalRandom.current().nextInt(100) > trade.condition()) {
             piglin.getWorld().spawnParticle(Particle.ANGRY_VILLAGER, piglin.getLocation().add(0, 2.2, 0), 0);
             piglin.getWorld().playSound(piglin.getLocation(), Sound.ENTITY_PIGLIN_ANGRY, 1.0F, 1.0F);
             return;
@@ -108,7 +137,10 @@ public class PiglinMainListener implements Listener {
     public void onDamage(EntityDamageByEntityEvent event) {
         // When piglins are damaged by an entity, they stop the active trade (vanilla behavior)
         if (event.getEntity() instanceof Piglin piglin) {
-            clearCurrentlyTradingPlayer(piglin);
+            TradeState trade = clearCurrentTrade(piglin);
+            if (trade != null) {
+                piglin.removeBarterMaterial(trade.material());
+            }
         }
     }
 
@@ -121,22 +153,44 @@ public class PiglinMainListener implements Listener {
         }
     }
 
-    private void setCurrentlyTradingPlayer(Piglin piglin, Player player) {
+    private void setCurrentTrade(Piglin piglin, Player player, AbstractRelic relic, Material material, int condition, UUID token) {
         piglin.getPersistentDataContainer().set(CURRENTLY_TRADING_PLAYER, PersistentDataType.STRING, player.getUniqueId().toString());
+        piglin.getPersistentDataContainer().set(CURRENTLY_TRADING_RELIC, PersistentDataType.STRING, relic.getId());
+        piglin.getPersistentDataContainer().set(CURRENTLY_TRADING_MATERIAL, PersistentDataType.STRING, material.name());
+        piglin.getPersistentDataContainer().set(CURRENTLY_TRADING_CONDITION, PersistentDataType.INTEGER, condition);
+        piglin.getPersistentDataContainer().set(CURRENTLY_TRADING_TOKEN, PersistentDataType.STRING, token.toString());
     }
 
-    private UUID clearCurrentlyTradingPlayer(Piglin piglin) {
-        UUID uuid = getCurrentlyTradingPlayer(piglin);
+    private TradeState clearCurrentTrade(Piglin piglin) {
+        TradeState trade = getCurrentTrade(piglin);
         piglin.getPersistentDataContainer().remove(CURRENTLY_TRADING_PLAYER);
-        return uuid;
+        piglin.getPersistentDataContainer().remove(CURRENTLY_TRADING_RELIC);
+        piglin.getPersistentDataContainer().remove(CURRENTLY_TRADING_MATERIAL);
+        piglin.getPersistentDataContainer().remove(CURRENTLY_TRADING_CONDITION);
+        piglin.getPersistentDataContainer().remove(CURRENTLY_TRADING_TOKEN);
+        return trade;
     }
 
-    private UUID getCurrentlyTradingPlayer(Piglin piglin) {
+    private TradeState getCurrentTrade(Piglin piglin) {
         String idString = piglin.getPersistentDataContainer().get(CURRENTLY_TRADING_PLAYER, PersistentDataType.STRING);
-        return idString == null ? null : UUID.fromString(idString);
+        String relicId = piglin.getPersistentDataContainer().get(CURRENTLY_TRADING_RELIC, PersistentDataType.STRING);
+        String material = piglin.getPersistentDataContainer().get(CURRENTLY_TRADING_MATERIAL, PersistentDataType.STRING);
+        Integer condition = piglin.getPersistentDataContainer().get(CURRENTLY_TRADING_CONDITION, PersistentDataType.INTEGER);
+        String token = piglin.getPersistentDataContainer().get(CURRENTLY_TRADING_TOKEN, PersistentDataType.STRING);
+        if (idString == null || relicId == null || material == null || condition == null || token == null) {
+            return null;
+        }
+
+        try {
+            return new TradeState(UUID.fromString(idString), relicId, Material.valueOf(material), Math.clamp(condition, 0, 99), UUID.fromString(token));
+        } catch (IllegalArgumentException exception) {
+            return null;
+        }
     }
 
     private boolean isCurrentlyTradingRelic(Piglin piglin) {
-        return getCurrentlyTradingPlayer(piglin) != null && SlimefunItem.getByItem(piglin.getEquipment().getItemInOffHand()) instanceof AbstractRelic;
+        return getCurrentTrade(piglin) != null;
     }
+
+    private record TradeState(UUID playerId, String relicId, Material material, int condition, UUID token) {}
 }

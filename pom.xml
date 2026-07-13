@@ -1,53 +1,52 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+    <groupId>com.github.drakescraft_labs</groupId>
+    <artifactId>RelicsOfCthonia-drake</artifactId>
+    <version>1.21.11-Drake.1</version>
+    <name>RelicsOfCthonia Drake</name>
+    <description>Nether relics addon maintained for the DrakesCraft Slimefun stack.</description>
 
-    <groupId>ne.fnfal113</groupId>
-    <artifactId>RelicsOfCthonia</artifactId>
-    <version>Unofficial-2.0.0</version>
-    <packaging>jar</packaging>
-
-    <name>RelicsOfCthonia</name>
-
-    <description>My Slimefun addon jam 2022 entry which is based on nether theme</description>
     <properties>
-        <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
+        <slimefun.drake.version>11.0-Drake-1.21.1-SNAPSHOT</slimefun.drake.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <url>https://github.com/FN-FAL113/RelicsOfCthonia</url>
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>drakescraft-labs-maven</id>
+            <url>https://drakescraft-labs.github.io/maven-repo/</url>
+        </repository>
+    </repositories>
 
     <build>
-        <finalName>${project.name} v${project.version}</finalName>
-        <defaultGoal>clean package</defaultGoal>
-        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-
+        <finalName>RelicsOfCthonia-drake</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>*</include>
-                    <include>json/*</include>
-                </includes>
             </resource>
         </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version>
+                <version>3.15.0</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <release>${maven.compiler.release}</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.30</version>
+                            <version>1.18.46</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -55,32 +54,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>ne.fnfal113.relicsofcthonia.bstats</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.github.bakedlibs.dough.updater</pattern>
-                            <shadedPattern>ne.fnfal113.relicsofcthonia.dough.updater</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.github.bakedlibs.dough.versions</pattern>
-                            <shadedPattern>ne.fnfal113.relicsofcthonia.dough.versions</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
+                        <goals><goal>shade</goal></goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <minimizeJar>true</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>ne.fnfal113.relicsofcthonia.bstats</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -88,64 +75,41 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-
-        <repository>
-            <id>paper-repo</id>
-            <url>https://repo.destroystokyo.com/repository/maven-public/</url>
-        </repository>
-
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.6-R0.1-SNAPSHOT</version>
+            <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>com.github.Slimefun</groupId>
-            <artifactId>Slimefun4</artifactId>
-            <version>RC-37</version>
+            <groupId>com.github.drakescraft_labs</groupId>
+            <artifactId>slimefun-core</artifactId>
+            <version>${slimefun.drake.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>com.github.baked-libs.dough</groupId>
-            <artifactId>dough-updater</artifactId>
-            <version>fcdbd45aa0</version>
-            <scope>compile</scope>
+            <groupId>com.github.drakescraft_labs</groupId>
+            <artifactId>dough-core</artifactId>
+            <version>1.3.1-DRAKE-v11-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.baked-libs.dough</groupId>
-            <artifactId>dough-common</artifactId>
-            <version>fcdbd45aa0</version>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
+            <version>1.18.46</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.0</version>
-            <scope>compile</scope>
+            <version>3.0.2</version>
         </dependency>
     </dependencies>
 </project>

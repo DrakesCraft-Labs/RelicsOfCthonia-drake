@@ -1,6 +1,6 @@
 package ne.fnfal113.relicsofcthonia.listeners;
 
-import io.github.thebusybiscuit.slimefun4.api.events.BlockPlacerPlaceEvent;
+import com.github.drakescraft_labs.slimefun4.api.events.BlockPlacerPlaceEvent;
 import ne.fnfal113.relicsofcthonia.RelicsOfCthonia;
 import ne.fnfal113.relicsofcthonia.RelicsRegistry;
 import ne.fnfal113.relicsofcthonia.slimefun.relics.AbstractRelic;
@@ -14,7 +14,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -36,22 +36,36 @@ public class MiningListener implements Listener {
             return;
         }
 
+        int maxDrops = Math.max(0, RelicsOfCthonia.getInstance().getConfig()
+            .getInt("mining.max-relic-drops-per-block", 1));
+        if (maxDrops == 0) {
+            return;
+        }
+
+        double multiplier = block.getType() == org.bukkit.Material.NETHERRACK
+            ? RelicsOfCthonia.getInstance().getConfig().getDouble("mining.netherrack-drop-chance-multiplier", 0.05)
+            : RelicsOfCthonia.getInstance().getConfig().getDouble("mining.material-drop-chance-multiplier", 0.20);
+        multiplier = Math.clamp(multiplier, 0.0, 1.0);
+
         int dropped = 0;
         List<AbstractRelic> relics = RelicsRegistry.BLOCK_SOURCES.get(block.getType());
         if (relics == null || relics.isEmpty()) {
             return;
         }
 
-        Collections.shuffle(relics);
+        // The registry is shared by every break event. Shuffle a copy so one
+        // player's mining cannot mutate the source list used by another event.
+        relics = new ArrayList<>(relics);
+        java.util.Collections.shuffle(relics);
         for (AbstractRelic relic : relics) {
             if (relic.isDisabledIn(event.getPlayer().getWorld()) || relic.isDisabled()) {
                 continue;
             }
 
-            if (ThreadLocalRandom.current().nextDouble() < relic.getDropChance()) {
+            if (ThreadLocalRandom.current().nextDouble() < relic.getDropChance() * multiplier) {
                 ItemStack drop = relic.randomRelic();
                 block.getWorld().dropItemNaturally(block.getLocation(), drop);
-                if (++dropped >= 2) {
+                if (++dropped >= maxDrops) {
                     break;
                 }
             }

@@ -1,7 +1,6 @@
 package ne.fnfal113.relicsofcthonia;
 
-import io.github.bakedlibs.dough.updater.BlobBuildUpdater;
-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import com.github.drakescraft_labs.slimefun4.api.SlimefunAddon;
 import lombok.Getter;
 import ne.fnfal113.relicsofcthonia.config.ConfigManager;
 import ne.fnfal113.relicsofcthonia.core.Items;
@@ -34,15 +33,13 @@ public final class RelicsOfCthonia extends JavaPlugin implements SlimefunAddon {
         getLogger().info("************************************************************");
 
         getConfig().options().copyDefaults();
+        getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
         Items.register();
 
         registerEvents();
 
-        if (getConfig().getBoolean("auto-update", true) && getDescription().getVersion().startsWith("Dev - ")) {
-            new BlobBuildUpdater(this, getFile(), "RelicsOfCthonia").start();
-        }
     }
 
     public void registerEvents(){

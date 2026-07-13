@@ -1,6 +1,6 @@
 package ne.fnfal113.relicsofcthonia.utils;
 
-import io.github.bakedlibs.dough.common.ChatColors;
+import dev.drake.dough.common.ChatColors;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;

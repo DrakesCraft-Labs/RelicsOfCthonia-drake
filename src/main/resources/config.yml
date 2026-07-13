@@ -1,5 +1,13 @@
-auto-update: true
+## This fork is deployed through a staged artifact and never self-updates.
+auto-update: false
 
-## Disable this if don't want to receive
-## chat messages regarding voided relics
+## Disable this if you do not want chat messages regarding voided relics.
 enable-relic-voider-notif: true
+
+## Natural Nether mining is intentionally scarce. Several relics share
+## NETHERRACK, so rolling every relic at its original chance created reward
+## bursts. The limits apply only to block-mining drops, not mob drops or trades.
+mining:
+  max-relic-drops-per-block: 1
+  material-drop-chance-multiplier: 0.20
+  netherrack-drop-chance-multiplier: 0.05
