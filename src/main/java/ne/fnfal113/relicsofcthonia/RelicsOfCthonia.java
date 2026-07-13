@@ -10,7 +10,6 @@ import ne.fnfal113.relicsofcthonia.listeners.OffHandClickListener;
 import ne.fnfal113.relicsofcthonia.listeners.PiglinMainListener;
 import ne.fnfal113.relicsofcthonia.listeners.RegistryFinalizedListener;
 import ne.fnfal113.relicsofcthonia.listeners.RelicVoiderListener;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
@@ -24,8 +23,6 @@ public final class RelicsOfCthonia extends JavaPlugin implements SlimefunAddon {
     @Override
     public void onEnable() {
         instance = this;
-        new Metrics(this, 15420);
-
         getLogger().info("************************************************************");
         getLogger().info("*         Relics of Cthonia - Created by FN_FAL113         *");
         getLogger().info("*               Slimefun Addon Jam 2022 Entry              *");
