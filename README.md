@@ -1,6 +1,6 @@
 <div align="center">
 
-![RelicsOfCthonia-Drake Banner](./banner.svg)
+  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/RelicsOfCthonia-drake/main/banner.svg" alt="RelicsOfCthonia-drake Banner" width="920" />
 
 # 🧪 RelicsOfCthonia-Drake
 
