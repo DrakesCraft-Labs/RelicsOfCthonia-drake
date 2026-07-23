@@ -35,6 +35,6 @@ mvn clean package
 
 <div align="center">
 
-**DrakesCraft Labs** · Maintained by [**JackStar6677-1**](https://github.com/JackStar6677-1)
+**DrakesCraft Labs** · Mantenido por [**JackStar6677-1**](https://github.com/JackStar6677-1)
 
 </div>
