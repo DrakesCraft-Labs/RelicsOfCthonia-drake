@@ -133,7 +133,8 @@ console.log(`Proyecto en uso: ${proyecto.slug} (${proyecto.id})`);
 // sube si el proyecto aun no tiene ninguno, para no pisar uno cambiado a mano desde la web.
 try {
   const rutaIcono = 'docs/icon.svg';
-  if (existsSync(rutaIcono) && !proyecto.icon_url) {
+  if (existsSync(rutaIcono)) {  // se reintenta siempre: Modrinth asigna un icono por defecto
+    console.log(`icono actual: ${proyecto.icon_url || 'ninguno'}`);
     const svg = readFileSync(rutaIcono);
     const r = await fetch(`${V2}/project/${proyecto.id}/icon?ext=svg`, {
       method: 'PATCH',
