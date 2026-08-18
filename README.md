@@ -2,73 +2,72 @@
 
   <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/RelicsOfCthonia-drake/main/banner.svg" alt="RelicsOfCthonia-drake Banner" width="920" />
 
-# 🧪 RelicsOfCthonia-Drake
+# 🔥 RelicsOfCthonia-Drake
 
-**Addon de Slimefun4 con Aceleración Nativa en Rust (Java 21 Project Panama FFM API)**
+**Expansión de reliquias ancestrales del Nether, altares ctónicos y artefactos de poder para Slimefun4.**
 
 <p>
   <a href="https://github.com/DrakesCraft-Labs/RelicsOfCthonia-drake"><img src="https://img.shields.io/badge/GitHub-RelicsOfCthonia--Drake-181717?style=for-the-badge&logo=github" alt="GitHub"/></a>
-  <img src="https://img.shields.io/badge/Java-21_FFM_Panama-F89820?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 21 FFM"/>
-  <img src="https://img.shields.io/badge/Rust-FFM_Accelerated-FF4500?style=for-the-badge&logo=rust&logoColor=white" alt="Rust Native"/>
+  <img src="https://img.shields.io/badge/Slimefun4-Drake_Edition-22C55E?style=for-the-badge&logo=curseforge&logoColor=white" alt="Slimefun4"/>
   <img src="https://img.shields.io/badge/Paper-1.21.11-38BDF8?style=for-the-badge&logo=minecraft&logoColor=white" alt="Paper 1.21.11"/>
+  <img src="https://img.shields.io/badge/Java-21-F89820?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 21"/>
 </p>
 
 </div>
 
 ---
 
-## ⚡ Novedades del Modelo Híbrido Cero-Riesgo
+## 📖 ¿Qué es RelicsOfCthonia-Drake?
 
-`RelicsOfCthonia-Drake` integra el componente Panama FFM **`RustNativeBridge`** para delegar la aceleración de tickers de máquinas y cálculos pesados directamente al motor nativo `Slimefun-Rust` (`slimefun_ffi`):
-- 🚀 **Procesamiento de Ticks en Nanosegundos**: Multi-hilo paralelo real en CPU sin pausas de Garbage Collector.
-- 🛡️ **Preservación Total sin Reset (SQLite 0-Reset)**: Mantiene intactos todos los bloques e inventarios existentes en `stored-blocks.db`.
+**RelicsOfCthonia-Drake** es una expansión temático-mágica del Nether para **Slimefun4**. Introduce un completo sistema de arqueología abisal, reliquias divididas por niveles de rareza, altares de transmutación y artefactos arcanos que otorgan habilidades pasivas y activas a los exploradores del Nether.
+
+Todo el contenido se desbloquea e investiga directamente desde la **Guía de Slimefun (`/sf guide`)** en la categoría de *Relics of Cthonia*.
 
 ---
 
-## 🛠️ Compilación
+## ⚔️ Características y Sistema de Reliquias
 
-```bash
-mvn clean package
-```
+### 💎 1. Niveles de Rareza de Reliquias
+Las reliquias se obtienen mediante excavación abisal, rituales y cofres de fortalezas del Nether, divididas en 6 rangos de poder:
+* **Comunes**: *Cthonian Pearl*, *Ring of Suffering*, *Petty Marble Block*, *Healing Draught*, *Petty Mushroom*.
+* **Poco Comunes**: *Pink Salt*, *Skull Hat*, *Cthonian Token*, *Aged Wine*, *Tanzanite Block*, *Blue Glowstone*, *Gray Berry*.
+* **Raras**: *Marriage Ring*, *Blaze Ashes*, *Crossed Swords*, *Cerulean Gem*, *Obsidian Eye*.
+* **Épicas & Legendarias**: Artefactos de transmutación capaces de canalizar esencias ctónicas para forjar equipamiento de combate superior.
+
+### 🏛️ 2. Maquinaria y Altares Ctónicos
+* **Cthonic Altar**: Altar de sacrificios rituales para activar reliquias dormidas.
+* **Soul Extractor**: Máquina de extracción de esencias espirituales a partir de restos abisales.
+* **Relic Infuser**: Infusor elemental que combina aleaciones de Slimefun con gemas ctónicas para fabricar armas y armaduras con efectos únicos.
+
+### 🛡️ 3. Beneficios y Efectos en Combate
+* Habilidades de resistencia a la lava, inmunidad al fuego permanente en Nether y regeneración por almas consumidas.
+* Aumento de daño crítico contra criaturas abisales (Wither Skeletons, Ghasts, Blazes y Piglins).
+
+---
+
+## 📋 Compatibilidad Técnica
+
+| Parámetro | Requisito |
+|---|---|
+| **Servidor** | Paper / Purpur / Folia **1.21.11** |
+| **Java** | **Java 21** LTS |
+| **Core Requerido** | [Slimefun4-Drake](https://github.com/DrakesCraft-Labs/Slimefun4-Drake) |
+| **Arquitectura** | 100% Server-side |
+
+---
+
+## 📥 Instalación
+
+1. Descarga la última versión de `RelicsOfCthonia-drake.jar` desde la pestaña [Versions](https://modrinth.com/mod/relicsofcthonia-drake/versions).
+2. Coloca el archivo `.jar` en la carpeta `plugins/` de tu servidor junto a `Slimefun4-Drake.jar`.
+3. Inicia o reinicia el servidor.
 
 ---
 
 <div align="center">
 
-**DrakesCraft Labs** · Mantenido por [**JackStar6677-1**](https://github.com/JackStar6677-1)
+**Desarrollado y Mantenido por [DrakesCraft Labs](https://github.com/DrakesCraft-Labs)**  
+*Basado en la entrada original del Slimefun Addon Jam 2022 por FN_FAL113.*  
+Licencia **GPL-3.0-only**.
 
 </div>
-
-## Qué añade al juego
-
-My Slimefun addon jam 2022 entry which is based on nether theme
-Registra alrededor de **39 objetos** en la guía de Slimefun.
-
-Todo se fabrica y se investiga desde la guía normal (`/sf guide`), como cualquier otro contenido
-de Slimefun: no hace falta ningún comando especial para empezar.
-
-## Compatibilidad
-
-| | |
-|---|---|
-| Servidor | Paper / Purpur **1.21.11** |
-| Java | **21** |
-| Requiere | [Slimefun4-Drake](https://github.com/DrakesCraft-Labs/Slimefun4-Drake) |
-| Lado | Solo servidor — quien juega no instala nada |
-| Versión | ${project.version} |
-
-## Instalación
-
-1. Descarga el `.jar` de la última versión.
-2. Déjalo en la carpeta `plugins/` del servidor, junto a Slimefun.
-3. Reinicia el servidor. Los objetos aparecen solos en la guía.
-
-> Este addon está portado al fork de Slimefun de DrakesCraft. Con el Slimefun original puede no
-> cargar, porque cambia el espacio de nombres de las clases.
-
-## Créditos
-- FN_FAL113
-
-Port y mantenimiento por **DrakesCraft Labs**. La autoría original es de quien figura arriba; el detalle está en [docs/UPSTREAM_ATTRIBUTION.md](https://raw.githubusercontent.com/DrakesCraft-Labs/RelicsOfCthonia-drake/main/docs/UPSTREAM_ATTRIBUTION.md).
-
-Licencia **GPL-3.0-only**.
