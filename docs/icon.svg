@@ -5,18 +5,21 @@
       <stop offset="100%" stop-color="#131C2E"/>
     </linearGradient>
     <linearGradient id="acG" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#38BDF8"/>
-      <stop offset="100%" stop-color="#93C5FD"/>
+      <stop offset="0%" stop-color="#DC2626"/>
+      <stop offset="100%" stop-color="#FB923C"/>
     </linearGradient>
     <radialGradient id="halo" cx="50%" cy="42%" r="55%">
-      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.28"/>
-      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#DC2626" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#DC2626" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="512" height="512" rx="96" fill="url(#fondo)"/>
   <rect width="512" height="512" rx="96" fill="url(#halo)"/>
   <rect x="4" y="4" width="504" height="504" rx="92" fill="none" stroke="url(#acG)" stroke-width="6" opacity="0.55"/>
   <g transform="translate(256,248) scale(2.6)">
-<polygon points="0,-24 20,-12 20,12 0,24 -20,12 -20,-12" fill="none" stroke="url(#acG)" stroke-width="4"/><circle cx="0" cy="0" r="7" fill="#38BDF8"/>
+
+    <path d="M0,-34 L26,-14 L18,20 L-18,20 L-26,-14 Z" fill="none" stroke="url(#acG)" stroke-width="4"/>
+    <circle cx="0" cy="-2" r="9" fill="#DC2626"/>
+    <path d="M0,20 L0,32" stroke="#FB923C" stroke-width="4" stroke-linecap="round"/>
   </g>
 </svg>
